@@ -1,8 +1,8 @@
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 setup(
-    name='MLclust',
+    name='mlclust',
     version='0.1',
-    packages=['Clusters', 'VariableSelection', 'Projection',  'Standardize'],
+    packages=find_packages(),
     license='Creative Commons Attribution-Noncommercial-Share Alike license'
 )
