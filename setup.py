@@ -1,1 +1,1 @@
-python mlclust install
+pip install --no-deps -e .
