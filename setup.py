@@ -1,1 +1,1 @@
-pip install mlclust
+python mlclust install
