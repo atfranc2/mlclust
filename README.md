@@ -90,8 +90,7 @@ git clone https://github.com/atfranc2/mlclust.git
     
     Computes the minimum and maximum distance bewteen any two points in the dataset. Then breaks the interval
     down into equal sized break to try as the eps value in the DBSCAN algorithm. 
-    
-    # Lower quantile of eps values to use in DBSCAN
+
     lower_eps_quant: float
         Lower quantile of eps values to use in DBSCAN. This is the quantile of dsitance values between 
         points in the dataset.
@@ -124,13 +123,17 @@ git clone https://github.com/atfranc2/mlclust.git
         Otherwise it is ignored.
 
 
-**plot_2dclusters( 
+**plot_2dclusters**(self, proj_method)
     
-    # If a projection method is not specified then the data must be projected prior 
-    # to viewing it is 2-D. This option specifes the method to project the data
-    # Options:['pca', 'umap', 'tsne', 'phate', 'isomap']
-    proj_method = 'pca' 
-)
+    Plot the data projected into 2-D space
+    
+    Parameters: 
+    
+    proj_method: str
+        If a projection method is not specified then the data must be projected prior to viewing it is 2-D. 
+        This option specifes the method to project the data. If a projection_method is specifed in __init__
+        then it is used by default. 
+        Options:['pca', 'umap', 'tsne', 'phate', 'isomap']
 
 
 
