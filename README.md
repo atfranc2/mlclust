@@ -43,6 +43,68 @@ git clone https://github.com/atfranc2/mlclust.git
 **rand_state: int, default = 123**
 
     The random seed to use in any randomized operations
-  
-  
+ 
+ 
+
+# Methods
+
+**define_vars**(self, x_df, y_df, alpha = 0.05)
+
+    Executes all of the data preprossessing and variable selection opterations
+    
+    Parameters:
+    x_df: Pandas Dataframe 
+        Contains the predictor variables
+    
+    y_df: Pandas Dataframe 
+        Contains the target variable (only binary categorical targets are currently supported)
+    
+    alpha: float
+        If the pvalue method was specified in select_var_method then an alpha level must be set to distiguish Significant variables.
+        Otherwise this option is ignored.
+        
+
+**define_vars**(self, x_df, y_df, alpha = 0.05)
+
+    Executes all of the data preprossessing and variable selection opterations
+    
+    Parameters:
+    x_df: Pandas Dataframe 
+        Contains the predictor variables
+    
+    y_df: Pandas Dataframe 
+        Contains the target variable (only binary categorical targets are currently supported)
+    
+    alpha: float
+        If the pvalue method was specified in select_var_method then an alpha level must be set to distiguish Significant variables.
+        Otherwise this option is ignored.
+
+
+**explore_kmclusters**(self, cluster_try)
+
+    cluster_try: int, default = 10
+        The number of cluster centroids to explore in the kmeans algorithm
+
+
+**explore_dbclusters**(self, lower_eps_quant, upper_eps_quant, eps_breaks, sample_set)
+
+    # Lower quantile of eps values to use in DBSCAN
+    lower_eps_quant = 0.05,
+    
+    # Upper quantile of eps values to use in DBSCAN
+    upper_eps_quant = 0.35, 
+    
+    # How many eps values to try
+    eps_breaks = 10,
+    
+    # What sample sizes to try to be considered a cluster
+    sample_set = [5,10,15] 
+
+
+
+
+
+
+
+
 
