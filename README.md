@@ -87,23 +87,50 @@ git clone https://github.com/atfranc2/mlclust.git
 
 
 **explore_dbclusters**(self, lower_eps_quant, upper_eps_quant, eps_breaks, sample_set)
-
+    
+    Computes the minimum and maximum distance bewteen any two points in the dataset. Then breaks the interval
+    down into equal sized break to try as the eps value in the DBSCAN algorithm. 
+    
     # Lower quantile of eps values to use in DBSCAN
-    lower_eps_quant = 0.05,
+    lower_eps_quant: float
+        Lower quantile of eps values to use in DBSCAN. This is the quantile of dsitance values between 
+        points in the dataset.
+   
+    upper_eps_quant: float
+        Upper quantile of eps values to use in DBSCAN. This is the quantile of dsitance values between 
+        points in the dataset.
     
-    # Upper quantile of eps values to use in DBSCAN
-    upper_eps_quant = 0.35, 
+    eps_breaks: int, default = 10
+         How many eps values to try
     
-    # How many eps values to try
-    eps_breaks = 10,
+    sample_set: list, default = [5,10,15] 
+        The values of min_samples to try in SKLearns DBSCAN algorithm. 
+
+**fit_clusters**(self, cluster_method, num_clust, eps, min_samples)
+
+    cluster_method: str
+        The clustering algorthm to use to cluster points
+        Options: ['kmeans', 'dbscan']
     
-    # What sample sizes to try to be considered a cluster
-    sample_set = [5,10,15] 
+    num_clust: int
+        The number of cluster centroids to initialize when 'kmeans' is specifed as the cluster_method. 
+        Otherwise it is ignored.
+    
+    eps: float
+        The eps value to use in SKLearns DBSCAN algorthm if 'dbscan' is the method specified in cluster_method. Otherwise it is               ignored.
+    
+    min_samples: int
+        The min_samples value to use in SKLearns DBSCAN algorthm if 'dbscan' is the method specified in cluster_method. 
+        Otherwise it is ignored.
 
 
-
-
-
+**plot_2dclusters( 
+    
+    # If a projection method is not specified then the data must be projected prior 
+    # to viewing it is 2-D. This option specifes the method to project the data
+    # Options:['pca', 'umap', 'tsne', 'phate', 'isomap']
+    proj_method = 'pca' 
+)
 
 
 
