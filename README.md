@@ -1,5 +1,7 @@
 # mlclust
-A package for preprocessing and modeling with continuous signal data
+A package for preprocessing, projecting, visualizing, building binary classifers, and clustering data. 
 
 # Getting Started
-pip install git+https://github.com/atfranc2/mlclust
+git clone https://github.com/atfranc2/mlclust.git
+
+# Tutorial
