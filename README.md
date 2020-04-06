@@ -4,6 +4,11 @@ A package for preprocessing, projecting, visualizing, building binary classifers
 # Getting Started
 git clone https://github.com/atfranc2/mlclust.git
 
+# Authors
+
+1. Andrew Francis
+2. Sam LaFell
+
 # Parameters
 
 **standard_method: str, default = None**
