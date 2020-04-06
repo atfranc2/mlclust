@@ -1,0 +1,265 @@
+import pandas as pd
+import mlclust as mlc
+
+
+# # Import the Data
+
+# In[2]:
+
+
+df_200 = pd.read_csv( r"D:\_Data\Training Datasets\CSV Data\Transformed Data\Probabilistic Quotient Normalized\prob_quotient_binned_0.04_with_target.csv" )
+
+df_200 = df_200.drop( ['Unnamed: 0', 'target'], axis = 1 )
+
+df_targets = pd.read_csv( r"D:\_Data\Training Datasets\CSV Data\training_patient_info.csv" )
+
+df_targets = df_targets.drop(['Unnamed: 0', 'cpmg_order', 'cbtid', 'Cohort', 'BatchInfo'], axis = 1 )
+
+var_info = pd.read_csv( r"D:\_Data\Raw Data\Spectral Information\MESA_CPMG_AlignedData_VarInfo.csv" )
+
+
+# # Function Demo
+
+# In[37]:
+
+
+# Call the main class of the mlclust module and store it as an object. This will initialize the functions parameters
+
+mlclust_object = mlc.Cluster(
+    
+    # How to standardize the data prior to perfroming any other analysis. 
+    # Options: [None, 'standardize', 'min_max', 'center']
+    standard_method = None, 
+    
+    # How to project the data prior to varible selection or clustering. 
+    # Options: [None, 'pca', 'umap', 'tsne', 'phate', 'isomap']
+    projection_method = 'pca', 
+    
+    # How to select significant variables before clustering.
+    # Options: ['lasso', 'pvalue']
+    select_var_method = 'pvalue', 
+    
+    # How many components to fit using the specified projection method. 
+    # Options: [None, int]
+    # Note 1: If no projection method is specified then this option will select the 1 - n_comps variables from the raw data
+    # Note 2: If a projection method is specified and n_comps = None then the maximum allowable components
+    n_comps = None, 
+    
+    # If umap or tsne is the projection method then this controls the n_neighbors parameter
+    # Options = [int]
+    # Note 1: For umap n_neighbors <= n_comps
+    n_neighbors = 100, 
+    
+    # Random state for any randomized operations
+    rand_state = 123
+
+)
+
+
+# In[46]:
+
+
+# Call the define_vars(...) method of the Cluster class stored in the mlclust_object
+# This method will perform all preprocessing steps specified in the previous steps
+# Note: This must be called before any other analysis is performed!
+mlclust_object.define_vars( 
+    
+    # Specify the predictor variables (i.e. the spectral variables)
+    x_df = df_200, 
+    
+    # Specify the target variable
+    # Note 1: Only binary target variables are supported
+    y_df = df_targets['gender1'], 
+    
+    # If the pvalue method was specified in select_var_method then an alpha level must be set to distiguish 
+        # Significant variables
+    # Note 1: This should be set to the metabolome wide significance level
+    alpha = 0.05 
+)
+
+
+# In[47]:
+
+
+# You can view the variables that will be considered in the next stage by calling: 
+mlclust_object.signif_vars
+
+
+# In[45]:
+
+
+# Pull the original preprocessed data
+mlclust_object.reference_data.head()
+
+
+# In[51]:
+
+
+# Pull the preprocessed data with the selected variables (sorted by increasing significance)
+mlclust_object.cluster_data.head()
+
+
+# In[54]:
+
+
+# If you projected the data then you can pull the projection object and use it to transform other data
+# and get the attributes of the fitted model such as the explained_variance_ratio_ for PCA
+
+mlclust_object.project_obj.explained_variance_ratio_[0:10]
+
+
+# In[55]:
+
+
+# View the significant variables selected in define_vars(...) in a plot by calling the plot_sig_vars() method
+# Note: This really only makes sense is no projection method is specified. If a projection method is specified 
+    # then it will just plot significant components
+mlclust_object.plot_sig_vars()
+
+
+# In[56]:
+
+
+'''
+Now we can start to explore clusters using either KMeans and DBSCAN. To get an idea about how many clusters we should 
+use for either method we can call the explore_kmclusters(...) and explore_dbclusters(...) methods. These methods will 
+help determine how many clusters to use in the final analysis. 
+'''
+
+
+####################################################
+# KMeans
+####################################################
+
+# Visualize the kmeans elbow plot: 
+mlclust_object.explore_kmclusters( 
+    
+    # How many cluster centroid to try
+    cluster_try = 10 
+)
+
+
+
+####################################################
+# DBSCAN
+####################################################
+
+# Visualize the dbscan cluster metrics: 
+mlclust_object.explore_dbclusters( 
+    
+    # Lower quantile of eps values to use in DBSCAN
+    lower_eps_quant = 0.05,
+    
+    # Upper quantile of eps values to use in DBSCAN
+    upper_eps_quant = 0.35, 
+    
+    # How many eps values to try
+    eps_breaks = 10,
+    
+    # What sample sizes to try to be considered a cluster
+    sample_set = [5,10,15] 
+)
+
+
+# In[58]:
+
+
+# Once we have decided on our clustering method and have discovered our desired parameters we can actually 
+# fit the clustering model object
+
+mlclust_object.fit_clusters(
+    
+    # Chose the clustering method to use
+    # Options: ['kmeans', 'dbscan']
+    cluster_method = 'kmeans', 
+    
+    # If kmeans is chosen, this will specify how many clusters to fit
+    # Options: [int]
+    num_clust = 2, 
+    
+    # If the DBSCAN clustering algorithm is specified this will set the eps parameter
+    eps = 2, 
+    
+    # If the DBSCAN clustering algorithm is specified this will specify the minimum number of points in a 
+    # cluster to be considered a cluster
+    min_samples = 3 
+)
+        
+
+
+# In[62]:
+
+
+# To pull the cluster labels for each observation we can call: 
+mlclust_object.labels
+
+
+# In[63]:
+
+
+# To pull the fitted clustering object we can call: 
+mlclust_object.cluster_object
+
+
+# In[64]:
+
+
+# Now we can view how the data clustered in 2-D space by calling plot_2dclusters(...)
+mlclust_object.plot_2dclusters( 
+    
+    # If a projection method is not specified then the data must be projected prior 
+    # to viewing it is 2-D. This option specifes the method to project the data
+    # Options:['pca', 'umap', 'tsne', 'phate', 'isomap']
+    proj_method = 'pca' 
+)
+
+
+# In[69]:
+
+
+# Now we can test if a significant difference between clusters exists with respect to 
+# gender, age, etc. by calling the cluster_analysis(...) method
+
+mlclust_object.cluster_analysis(
+    
+    # The variable of interest to test across groups
+    # Note: Only binary and continuoustargets are currently supported
+    target_col = df_targets['gender1'], 
+    
+    # Defines the groups to test across (i.e. test the difference in the proportion of gender across clusters)
+    group_col = mlclust_object.labels, 
+    
+    # What test to use to test the difference of targets across groups
+    # Options: ['Fisher', 'ANOVA']
+    # Note: Use Fisher when the target is binary and use ANOVA when the target is continuous
+    test = 'Fisher',
+    
+    # The alpha level to use when testing the pairwise difference between groups
+    group_alpha = 0.5, 
+    
+    # The alpha level to use when testing the pairwise difference in the spectral intensities between groups
+        # Ideally this should be set to the metabolome wide significance level because is the dataset has 24,000
+        # variables then 24,000 pairwise tests will be conducted
+    pairwise_alpha = 1.88e-6,
+    
+    # The method to use when conducting pairwise difference tests across groups
+    # Options: ['median', 'mean']
+    # Note: When median is specified then the Mann-Whiteney U test is used to test is a significant difference 
+        # between the median intensities exists. When mean is specified, pairwise t-tests are condicted
+    pairwise_method = 'median',
+    
+    # Will plot the regions on the spectum where pairwise differences exist
+    # Options: [True, False]
+    # Note: The data returned is a list of lists with structure 
+
+    plot = True,
+    
+    # Will return the data pertaining to the pairwise difference tests
+    # Options: [True, False]
+    # [[Groups tested], [Variables where significant differences exist]]
+        # i.e. [[0,1], ['V1', 'V8', 'V9']] a significant differnece in the median intensity exists between groups at 
+        # variables 'V1', 'V8', and 'V9'. 
+    return_data = False
+)
+        
+
