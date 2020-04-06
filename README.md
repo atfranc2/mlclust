@@ -62,22 +62,6 @@ git clone https://github.com/atfranc2/mlclust.git
     alpha: float
         If the pvalue method was specified in select_var_method then an alpha level must be set to distiguish Significant variables.
         Otherwise this option is ignored.
-        
-
-**define_vars**(self, x_df, y_df, alpha = 0.05)
-
-    Executes all of the data preprossessing and variable selection opterations
-    
-    Parameters:
-    x_df: Pandas Dataframe 
-        Contains the predictor variables
-    
-    y_df: Pandas Dataframe 
-        Contains the target variable (only binary categorical targets are currently supported)
-    
-    alpha: float
-        If the pvalue method was specified in select_var_method then an alpha level must be set to distiguish Significant variables.
-        Otherwise this option is ignored.
 
 
 **explore_kmclusters**(self, cluster_try)
@@ -121,7 +105,6 @@ git clone https://github.com/atfranc2/mlclust.git
     min_samples: int
         The min_samples value to use in SKLearns DBSCAN algorthm if 'dbscan' is the method specified in cluster_method. 
         Otherwise it is ignored.
-
 
 **plot_2dclusters**(self, proj_method)
     
