@@ -213,5 +213,81 @@ Plot a kmeans elbow plot:
         cluster_try = 10 
     )
     
+    Output: 
+    
+![kmean elbow plot](https://github.com/atfranc2/mlclust/blob/master/output/kmeans_plot.png)
+
+
+Plot DBSCAN Plot:
+
+    mlclust_object.explore_dbclusters( 
+
+        # Lower quantile of eps values to use in DBSCAN
+        lower_eps_quant = 0.05,
+
+        # Upper quantile of eps values to use in DBSCAN
+        upper_eps_quant = 0.35, 
+
+        # How many eps values to try
+        eps_breaks = 10,
+
+        # What sample sizes to try to be considered a cluster
+        sample_set = [5,10,15] 
+    )
+    
+    Output:
+    
+![DBSCAN plot](https://github.com/atfranc2/mlclust/blob/master/output/dbscan_plot.png)
+
+
+Once a clustering method is decided on the clusters can now be fit using fit_clusters: 
+
+    mlclust_object.fit_clusters(
+
+        # Chose the clustering method to use
+        # Options: ['kmeans', 'dbscan']
+        cluster_method = 'kmeans', 
+
+        # If kmeans is chosen, this will specify how many clusters to fit
+        # Options: [int]
+        num_clust = 2, 
+
+        # If the DBSCAN clustering algorithm is specified this will set the eps parameter
+        eps = 2, 
+
+        # If the DBSCAN clustering algorithm is specified this will specify the minimum number of points in a 
+        # cluster to be considered a cluster
+        min_samples = 3 
+    )
+
+Get the cluster labels: 
+
+    mlclust_object.labels
+    
+    Output: array([0, 1, 0, ..., 1, 0, 0])
+    
+Retrieve the cluster object, which in this case is an SKlearn kmeans object: 
+
+    mlclust_object.cluster_object
+    
+    Output: 
+    
+    KMeans(algorithm='auto', copy_x=True, init='k-means++', max_iter=300,
+       n_clusters=2, n_init=10, n_jobs=None, precompute_distances='auto',
+       random_state=123, tol=0.0001, verbose=0)
+       
+Plot the data in two dimensions and color by cluster: 
+
+    mlclust_object.plot_2dclusters( 
+
+        # If a projection method is not specified then the data must be projected prior 
+        # to viewing it is 2-D. This option specifes the method to project the data
+        # Options:['pca', 'umap', 'tsne', 'phate', 'isomap']
+        proj_method = 'pca' 
+    )
+    
+    Output: 
+    
+![2-D cluster Plot](https://github.com/atfranc2/mlclust/blob/master/output/pca_cluster_plot.png)
 
 
