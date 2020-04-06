@@ -1,6 +1,0 @@
-README.md
-setup.py
-mlclust.egg-info/PKG-INFO
-mlclust.egg-info/SOURCES.txt
-mlclust.egg-info/dependency_links.txt
-mlclust.egg-info/top_level.txt
