@@ -119,5 +119,99 @@ git clone https://github.com/atfranc2/mlclust.git
         Options:['pca', 'umap', 'tsne', 'phate', 'isomap']
 
 
+# Usage Example
+
+Get some data: 
+
+    toy = df[df.columns[0:20]].iloc[0:5000]
+
+    target = df['target1'].iloc[0:5000]
+
+Initialize the mlclust object class: 
+
+    mlclust_object = mlc.Cluster(
+
+        # How to standardize the data prior to perfroming any other analysis. 
+        # Options: [None, 'standardize', 'min_max', 'center']
+        standard_method = 'standardize', 
+
+        # How to project the data prior to varible selection or clustering. 
+        # Options: [None, 'pca', 'umap', 'tsne', 'phate', 'isomap']
+        projection_method = 'pca', 
+
+        # How to select significant variables before clustering.
+        # Options: ['lasso', 'pvalue']
+        select_var_method = 'pvalue', 
+
+        # How many components to fit using the specified projection method. 
+        # Options: [None, int]
+        # Note 1: If no projection method is specified then this option will select the 1 - n_comps variables from the raw data
+        # Note 2: If a projection method is specified and n_comps = None then the maximum allowable components
+        n_comps = None, 
+
+        # If umap or tsne is the projection method then this controls the n_neighbors parameter
+        # Options = [int]
+        # Note 1: For umap n_neighbors <= n_comps
+        n_neighbors = 100, 
+
+        # Random state for any randomized operations
+        rand_state = 123
+
+    )
+    
+Preprocess the data by standardizing the data -> projecting the data using PCA -> Selecting principal components
+that are significant in predicting the target classes at alpha = 0.05: 
+
+    mlclust_object.define_vars( 
+
+        # Specify the predictor variables (i.e. the spectral variables)
+        x_df = toy, 
+
+        # Specify the target variable
+        # Note 1: Only binary target variables are supported
+        y_df = target, 
+
+        # If the pvalue method was specified in select_var_method then an alpha level must be set to distiguish 
+            # Significant variables
+        # Note 1: This should be set to the metabolome wide significance level
+        alpha = 0.05 
+    )
+
+Pull significant variables: 
+    
+    mlclust_object.signif_vars
+    
+    Output: array(['PC18', 'PC2', 'PC12', 'PC19', 'PC3'], dtype=object)
+    
+Pull the project object. In this case it is an SKlearn PCA object: 
+
+    mlclust_object.project_obj.explained_variance_ratio_[0:10]
+    
+    Output: array([0.1796708 , 0.17337912, 0.08249129, 0.07046907, 0.06280863,
+                   0.06127295, 0.05087925, 0.04469096, 0.03903693, 0.03445266])
+                   
+Get the dataframe with the significant pricnipal components sorted by decreasing significance: 
+
+    mlclust_object.cluster_data.head()
+    
+    Output: 
+    
+|   | PC18      | PC2       | PC12      | PC19      | PC3       |
+|---|-----------|-----------|-----------|-----------|-----------|
+| 0 | -0.064003 | 0.486440  | -0.613948 | -0.447888 | 1.083790  |
+| 1 | -0.064813 | -1.145281 | 0.369435  | 0.122299  | 1.442297  |
+| 2 | -0.047029 | 1.454269  | 0.631783  | 0.162778  | -1.360187 |
+| 3 | 0.039484  | -0.926692 | 0.739888  | 0.170727  | -0.080960 |
+| 4 | -0.136652 | -2.704280 | 0.234936  | 0.287860  | -0.992221 |
+
+
+Plot a kmeans elbow plot: 
+
+    mlclust_object.explore_kmclusters( 
+
+        # How many cluster centroid to try
+        cluster_try = 10 
+    )
+    
 
 
